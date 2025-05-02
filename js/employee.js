@@ -12,55 +12,53 @@
  * 全てのイベントリスナーを設定し、初期データを読み込みます
  */
 function initEmployeePage() {
+    console.log('従業員ページの初期化開始');
+    
     // 権限チェック
     if (!checkAuth('employee')) return;
 
+    // 基本的なUI初期化（まず最初に表示すべき要素）
+    setupEmployeeBasics();
+    
+    // 残りの初期化を少し遅延させて実行
+    setTimeout(function() {
+        // 現在の日時を表示
+        updateDateTime();
+        
+        // 勤怠状況の確認
+        checkTodayAttendance();
+        
+        // 最近の記録を表示
+        loadRecentRecords();
+        
+        // イベントハンドラを設定
+        setupEmployeeEvents();
+        
+        // 現場オプションの読み込み
+        populateSiteOptions();
+        
+        // 1秒ごとに時刻を更新するタイマーを設定
+        setInterval(updateDateTime, 1000);
+        
+        console.log('従業員ページの詳細初期化完了');
+    }, 200);
+}
+
+/**
+ * 従業員画面の基本的なUI初期化
+ * 最初に表示すべき要素のみを設定
+ */
+function setupEmployeeBasics() {
     // ユーザー名を表示
     const currentUser = getCurrentUser();
     if (currentUser) {
         const userNameEl = getElement('user-name');
-        if (userNameEl) userNameEl.textContent = currentUser.fullName;
+        if (userNameEl) {
+            userNameEl.textContent = currentUser.fullName;
+            console.log('ユーザー名を表示:', currentUser.fullName);
+        }
     }
-    
-    // 現在の日時を表示
-    updateDateTime();
-    
-    // 勤怠状況の確認
-    checkTodayAttendance();
-    
-    // 最近の記録を表示
-    loadRecentRecords();
-    
-    // イベントハンドラを設定
-    setupEmployeeEvents();
-    
-    // 現場オプションの読み込み
-    populateSiteOptions();
-    
-    // 1秒ごとに時刻を更新するタイマーを設定
-    setInterval(updateDateTime, 1000);
 }
-
-/**
- * 従業員画面のイベント設定
- * 各ボタンやフォーム要素にイベントリスナーを設定します
- */
-function setupEmployeeEvents() {
-    // サイト選択の切り替え
-    const siteSelect = getElement('site-name');
-    const otherSite = getElement('other-site');
-    
-    if (siteSelect && otherSite) {
-        siteSelect.addEventListener('change', function() {
-            if (this.value === 'other') {
-                otherSite.style.display = 'block';
-                otherSite.required = true;
-            } else {
-                otherSite.style.display = 'none';
-                otherSite.required = false;
-            }
-        });
-    }
     
     // 出勤ボタン
     const clockInBtn = getElement('clock-in-btn');
