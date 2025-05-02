@@ -9,35 +9,41 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('勤怠管理システムを初期化中...');
     
-    // ユーザーの状態を確認
-    const currentUser = getCurrentUser();
-    
-    if (currentUser) {
-        console.log(`ログイン済みユーザー: ${currentUser.fullName} (${currentUser.role})`);
+    // ページの初期化を少し遅延させて確実に実行
+    setTimeout(function() {
+        // ユーザーの状態を確認
+        const currentUser = getCurrentUser();
         
-        // ユーザーの役割に応じた画面を表示
-        if (currentUser.role === 'admin') {
-            showPage('admin');
-            initAdminPage();
-        } else if (currentUser.role === 'employee') {
-            showPage('employee');
-            initEmployeePage();
+        if (currentUser) {
+            console.log(`ログイン済みユーザー: ${currentUser.fullName} (${currentUser.role})`);
+            
+            // ユーザーの役割に応じた画面を表示
+            if (currentUser.role === 'admin') {
+                showPage('admin');
+                // 画面の表示が完了してから初期化
+                setTimeout(function() {
+                    initAdminPage();
+                }, 50);
+            } else if (currentUser.role === 'employee') {
+                showPage('employee');
+                // 画面の表示が完了してから初期化
+                setTimeout(function() {
+                    initEmployeePage();
+                }, 50);
+            } else {
+                // 不明な役割の場合はログアウト
+                localStorage.removeItem('currentUser');
+                showPage('login');
+                initLoginForm();
+            }
         } else {
-            // 不明な役割の場合はログアウトしてログイン画面へ
-            console.warn('不明なユーザー役割:', currentUser.role);
-            localStorage.removeItem('currentUser');
+            // 未ログイン時
             showPage('login');
             initLoginForm();
         }
-    } else {
-        // 未ログインの場合はログイン画面を表示
-        console.log('未ログインユーザー - ログイン画面を表示');
-        showPage('login');
-        initLoginForm();
-    }
-    
-    // 初期化完了
-    console.log('勤怠管理システムの初期化が完了しました');
+        
+        console.log('勤怠管理システムの初期化が完了しました');
+    }, 100);
 });
 
 /**
