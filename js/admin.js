@@ -1,44 +1,54 @@
 /**
- * 勤怠管理システム - 管理者機能
- * 
- * このファイルには、管理者画面の機能に関連する関数が含まれています。
- * 勤怠データの閲覧、編集、削除、CSVエクスポートなどの処理を担当します。
- */
-
-// ================ 管理者側の機能 ================
-
-/**
  * 管理者画面の初期化処理
  * 全てのイベントリスナーを設定し、初期データを読み込みます
  */
 function initAdminPage() {
+    console.log('管理者ページの初期化開始');
+    
     // 権限チェック
     if (!checkAuth('admin')) return;
 
+    // 基本的なUI初期化（まず最初に表示すべき要素）
+    setupAdminBasics();
+    
+    // 残りの初期化を少し遅延させて実行
+    setTimeout(function() {
+        // 今日の日付をセット
+        const today = new Date().toISOString().split('T')[0];
+        const filterDate = getElement('filter-date');
+        if (filterDate) filterDate.value = today;
+        
+        // 今月をセット
+        const thisMonth = today.substring(0, 7);
+        const filterMonth = getElement('filter-month');
+        if (filterMonth) filterMonth.value = thisMonth;
+        
+        // データの読み込み
+        loadEmployeeList();
+        loadSiteList();
+        loadAttendanceData();
+        
+        // イベントリスナーの設定
+        setupAdminEvents();
+        
+        console.log('管理者ページの詳細初期化完了');
+    }, 200);
+}
+
+/**
+ * 管理者画面の基本的なUI初期化
+ * 最初に表示すべき要素のみを設定
+ */
+function setupAdminBasics() {
     // ユーザー名を表示
     const currentUser = getCurrentUser();
     if (currentUser) {
         const adminUserNameEl = getElement('admin-user-name');
-        if (adminUserNameEl) adminUserNameEl.textContent = currentUser.fullName;
+        if (adminUserNameEl) {
+            adminUserNameEl.textContent = currentUser.fullName;
+            console.log('管理者名を表示:', currentUser.fullName);
+        }
     }
-    
-    // 今日の日付をセット
-    const today = new Date().toISOString().split('T')[0];
-    const filterDate = getElement('filter-date');
-    if (filterDate) filterDate.value = today;
-    
-    // 今月をセット
-    const thisMonth = today.substring(0, 7);
-    const filterMonth = getElement('filter-month');
-    if (filterMonth) filterMonth.value = thisMonth;
-    
-    // データの読み込み
-    loadEmployeeList();
-    loadSiteList();
-    loadAttendanceData();
-    
-    // イベントリスナーの設定
-    setupAdminEvents();
 }
 
 /**
