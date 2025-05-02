@@ -632,8 +632,16 @@ textarea:focus {
     display: none !important;
 }
 
+/* 既存のerror-textクラス */
 .error-text {
     color: #ff4d4d;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* 新たに成功メッセージ用のクラスを追加 */
+.success-text {
+    color: #4CAF50;
     font-size: 14px;
     margin-top: 10px;
 }
