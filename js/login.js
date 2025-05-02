@@ -126,6 +126,7 @@ function initSimpleRegisterForm() {
                 // 重複の場合
                 console.log('重複ユーザーが見つかりました:', existingUser);
                 if (msgEl) {
+                    msgEl.className = 'error-text'; 
                     msgEl.textContent = 'このユーザーIDは既に使用されています';
                     // クラスをそのままにして赤いメッセージ表示
                 }
@@ -165,7 +166,7 @@ function initSimpleRegisterForm() {
                 // 成功メッセージを表示 - ここが重要
                 if (msgEl) {
                     // 既存のクラスを削除して直接スタイルを設定
-                    msgEl.className = ''; // error-textクラスを削除
+                    msgEl.className = 'success-text';
                     msgEl.textContent = '登録が完了しました！ログイン画面に戻ります...';
                     msgEl.style.color = '#4CAF50'; // 緑色を直接指定
                     
