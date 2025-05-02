@@ -60,7 +60,6 @@ function setupEmployeeBasics() {
             console.log('ユーザー名を表示:', currentUser.fullName);
         }
     }
-}
     
     // 出勤ボタン
     const clockInBtn = getElement('clock-in-btn');
@@ -95,7 +94,6 @@ function setupEmployeeBasics() {
         });
     }
 }
-
 /**
  * 勤務状況をチェックしてボタンの有効/無効状態を更新する
  * 今日の勤怠記録に基づいて、ボタンの状態や表示内容を変更します
