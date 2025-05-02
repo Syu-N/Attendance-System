@@ -1,10 +1,10 @@
 /**
- * 勤怠管理システム - ログイン・ユーザー登録機能 (シンプル版)
+ * 勤怠管理システム - ログイン・ユーザー登録機能 (完全修正版)
  */
 
 // ログインフォームの初期化
 function initLoginForm() {
-    console.log('ログインフォーム初期化 (シンプル版)');
+    console.log('ログインフォーム初期化 (完全修正版)');
     
     // 初期ユーザーの確認
     setupInitialUsers();
@@ -76,51 +76,76 @@ function initLoginForm() {
     initSimpleRegisterForm();
 }
 
-// 非常にシンプルな登録フォーム初期化
+// 非常にシンプルな登録フォーム初期化 (完全修正版)
 function initSimpleRegisterForm() {
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('フォーム送信イベント発生');
             
+            // メッセージ要素を取得
+            const msgEl = document.getElementById('register-message');
+            
+            // ユーザー入力を取得
             const username = document.getElementById('reg-username').value.trim();
             const password = document.getElementById('reg-password').value.trim();
             const fullName = document.getElementById('reg-fullname').value.trim();
             const role = document.getElementById('reg-role').value;
             
-            const msgEl = document.getElementById('register-message');
+            console.log('入力値:', {username, fullName, role});
             
             // 入力チェック
             if (!username || !password || !fullName) {
                 if (msgEl) {
                     msgEl.textContent = '全ての項目を入力してください';
-                    msgEl.style.color = '#F44336'; // 赤色で表示
+                    msgEl.style.color = '#F44336'; // 赤色
                 }
+                console.log('入力チェックエラー: 未入力項目あり');
                 return;
             }
             
-            // 直接ユーザー登録処理
+            // ユーザーデータ取得
             let users = [];
             try {
                 const data = localStorage.getItem('users');
                 if (data) {
                     users = JSON.parse(data);
+                    console.log('既存ユーザー数:', users.length);
+                } else {
+                    console.log('ユーザーデータがありません');
                 }
             } catch (e) {
                 console.error('ユーザーデータ読み取りエラー:', e);
-                users = [];
             }
             
-            // ユーザー登録処理部分
-            if (users.some(u => u.username === username)) {
+            // 重複チェック - findを使用して詳細な確認
+            const existingUser = users.find(u => u.username === username);
+            
+            if (existingUser) {
                 // 重複の場合
+                console.log('重複ユーザーが見つかりました:', existingUser);
                 if (msgEl) {
                     msgEl.textContent = 'このユーザーIDは既に使用されています';
                     msgEl.style.color = '#F44336'; // 赤色
                 }
-            } else {
-                // 重複がなく登録成功の場合
-                const newId = users.length > 0 ? Math.max(...users.map(u => Number(u.id) || l)) + 1 : 1;
+                return; // 処理を終了
+            }
+            
+            // ここから新規ユーザー登録処理 (重複がない場合のみ実行)
+            try {
+                // 新しいIDを生成
+                let newId = 1;
+                if (users.length > 0) {
+                    // 数値に変換して最大値を取得
+                    const ids = users.map(u => {
+                        const id = Number(u.id);
+                        return isNaN(id) ? 0 : id;
+                    });
+                    newId = Math.max(...ids) + 1;
+                }
+                
+                // 新規ユーザーオブジェクトを作成
                 const newUser = {
                     id: newId,
                     username: username,
@@ -128,17 +153,20 @@ function initSimpleRegisterForm() {
                     fullName: fullName,
                     role: role || 'employee'
                 };
-    
-                // 追加して保存
+                
+                // ユーザーリストに追加
                 users.push(newUser);
+                
+                // ローカルストレージに保存
                 localStorage.setItem('users', JSON.stringify(users));
+                
                 console.log('新規ユーザーを登録しました:', newUser);
-    
-                // 成功メッセージを明確に表示
+                
+                // 成功メッセージを表示
                 if (msgEl) {
                     msgEl.textContent = '登録が完了しました！ログイン画面に戻ります...';
                     msgEl.style.color = '#4CAF50'; // 緑色
-        
+                    
                     // 3秒後にログイン画面へ
                     setTimeout(() => {
                         document.getElementById('register-page').classList.add('hidden');
@@ -147,6 +175,13 @@ function initSimpleRegisterForm() {
                         msgEl.textContent = '';
                         msgEl.style.color = '';
                     }, 3000);
+                }
+            } catch (error) {
+                // エラー処理
+                console.error('ユーザー登録エラー:', error);
+                if (msgEl) {
+                    msgEl.textContent = '登録処理中にエラーが発生しました';
+                    msgEl.style.color = '#F44336'; // 赤色
                 }
             }
         });
@@ -158,6 +193,7 @@ function initSimpleRegisterForm() {
         backBtn.addEventListener('click', function() {
             document.getElementById('register-page').classList.add('hidden');
             document.getElementById('login-page').classList.remove('hidden');
+            
             // フォームとメッセージをリセット
             const registerForm = document.getElementById('registerForm');
             if (registerForm) registerForm.reset();
@@ -202,6 +238,8 @@ function setupInitialUsers() {
 
 // DOMが読み込まれた時にログインフォームを初期化
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM読み込み完了');
+    
     // 画面初期表示
     document.querySelectorAll('#login-page, #employee-page, #admin-page, #register-page')
         .forEach(el => el.classList.add('hidden'));
