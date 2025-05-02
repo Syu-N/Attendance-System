@@ -99,7 +99,7 @@ function initSimpleRegisterForm() {
             if (!username || !password || !fullName) {
                 if (msgEl) {
                     msgEl.textContent = '全ての項目を入力してください';
-                    msgEl.style.color = '#F44336'; // 赤色
+                    // クラスをそのままにして赤いメッセージ表示
                 }
                 console.log('入力チェックエラー: 未入力項目あり');
                 return;
@@ -127,7 +127,7 @@ function initSimpleRegisterForm() {
                 console.log('重複ユーザーが見つかりました:', existingUser);
                 if (msgEl) {
                     msgEl.textContent = 'このユーザーIDは既に使用されています';
-                    msgEl.style.color = '#F44336'; // 赤色
+                    // クラスをそのままにして赤いメッセージ表示
                 }
                 return; // 処理を終了
             }
@@ -162,10 +162,12 @@ function initSimpleRegisterForm() {
                 
                 console.log('新規ユーザーを登録しました:', newUser);
                 
-                // 成功メッセージを表示
+                // 成功メッセージを表示 - ここが重要
                 if (msgEl) {
+                    // 既存のクラスを削除して直接スタイルを設定
+                    msgEl.className = ''; // error-textクラスを削除
                     msgEl.textContent = '登録が完了しました！ログイン画面に戻ります...';
-                    msgEl.style.color = '#4CAF50'; // 緑色
+                    msgEl.style.color = '#4CAF50'; // 緑色を直接指定
                     
                     // 3秒後にログイン画面へ
                     setTimeout(() => {
@@ -174,6 +176,7 @@ function initSimpleRegisterForm() {
                         registerForm.reset();
                         msgEl.textContent = '';
                         msgEl.style.color = '';
+                        msgEl.className = 'error-text'; // クラスを元に戻す
                     }, 3000);
                 }
             } catch (error) {
@@ -181,7 +184,7 @@ function initSimpleRegisterForm() {
                 console.error('ユーザー登録エラー:', error);
                 if (msgEl) {
                     msgEl.textContent = '登録処理中にエラーが発生しました';
-                    msgEl.style.color = '#F44336'; // 赤色
+                    // エラーメッセージは既存のクラスのまま
                 }
             }
         });
@@ -201,7 +204,8 @@ function initSimpleRegisterForm() {
             const msgEl = document.getElementById('register-message');
             if (msgEl) {
                 msgEl.textContent = '';
-                msgEl.style.color = '';
+                msgEl.className = 'error-text'; // クラスを元に戻す
+                msgEl.style.color = ''; // スタイルをリセット
             }
         });
     }
