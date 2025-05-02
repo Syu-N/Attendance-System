@@ -173,10 +173,19 @@ function getUsers() {
  * @returns {Object} 登録結果（success, message, user）
  */
 function registerUser(username, password, fullName, role) {
-    const users = getUsers();
+    // この部分を修正
+    // const users = getUsers();
+    
+    // 以下のように修正
+    // ユーザーデータを直接ローカルストレージから取得
+    const usersJSON = localStorage.getItem('users');
+    const users = usersJSON ? JSON.parse(usersJSON) : [];
+    
+    console.log('登録処理 - 現在のユーザー:', users);
     
     // ユーザー名の重複チェック
     if (users.some(user => user.username === username)) {
+        console.log('重複ユーザーが見つかりました:', username);
         return {
             success: false,
             message: 'このユーザーIDは既に使用されています'
@@ -195,6 +204,8 @@ function registerUser(username, password, fullName, role) {
     
     users.push(newUser);
     localStorage.setItem('users', JSON.stringify(users));
+    
+    console.log('登録完了 - 保存後のユーザー:', JSON.parse(localStorage.getItem('users')));
     
     return {
         success: true,
