@@ -27,16 +27,34 @@ function initLoginForm() {
                     
                     if (user.role === 'admin') {
                         showPage('admin');
+
+                        setTimeout(function(){
+                            if (typeof initAdminPage === 'function'){
+                                console.log('管理者ページを初期化中...');
+                                initAdminPage();
+                            }else{
+                                console.error('initAdminPage関数が見つかりません');
+                            }
+                        }, 100);
                     } else {
                         showPage('employee');
+                        setTimeout(function(){
+                            if (typeof initEmployeePage === 'function'){
+                                console.log('従業員ページを初期化中...');
+                                initEmployeePage();
+                            } else {
+                                console.error('initEmployeePage関数が見つかりません');
+                            }
+                        }, 100);
                     }
                 } else {
                     console.log('ユーザー認証失敗');
                     const errorMsg = getElement('error-message');
-                    if (errorMsg) {
+                    if (errorMsg){
                         errorMsg.textContent = 'ユーザーIDまたはパスワードが正しくありません';
                     }
                 }
+                    
             } catch (error) {
                 console.error('認証エラー:', error);
                 const errorMsg = getElement('error-message');
