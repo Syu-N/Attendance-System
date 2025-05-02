@@ -1,3 +1,5 @@
+console.log('employee.js loaded');
+
 /**
  * 勤怠管理システム - 従業員機能
  * 
