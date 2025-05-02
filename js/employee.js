@@ -94,6 +94,33 @@ function setupEmployeeBasics() {
         });
     }
 }
+
+/**
+ * 従業員画面のイベント設定
+ * イベントハンドラーの登録を担当します
+ */
+function setupEmployeeEvents() {
+    console.log('従業員イベントを設定中...');
+    
+    // サイト選択の切り替え
+    const siteSelect = getElement('site-name');
+    const otherSite = getElement('other-site');
+    
+    if (siteSelect && otherSite) {
+        siteSelect.addEventListener('change', function() {
+            if (this.value === 'other') {
+                otherSite.style.display = 'block';
+                otherSite.required = true;
+            } else {
+                otherSite.style.display = 'none';
+                otherSite.required = false;
+            }
+        });
+    }
+    
+    console.log('従業員イベント設定完了');
+}
+
 /**
  * 勤務状況をチェックしてボタンの有効/無効状態を更新する
  * 今日の勤怠記録に基づいて、ボタンの状態や表示内容を変更します
