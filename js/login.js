@@ -88,9 +88,14 @@ function initSimpleRegisterForm() {
             const fullName = document.getElementById('reg-fullname').value.trim();
             const role = document.getElementById('reg-role').value;
             
+            const msgEl = document.getElementById('register-message');
+            
+            // 入力チェック
             if (!username || !password || !fullName) {
-                const msgEl = document.getElementById('register-message');
-                if (msgEl) msgEl.textContent = '全ての項目を入力してください';
+                if (msgEl) {
+                    msgEl.textContent = '全ての項目を入力してください';
+                    msgEl.style.color = '#F44336'; // 赤色で表示
+                }
                 return;
             }
             
@@ -102,13 +107,16 @@ function initSimpleRegisterForm() {
                     users = JSON.parse(data);
                 }
             } catch (e) {
+                console.error('ユーザーデータ読み取りエラー:', e);
                 users = [];
             }
             
             // 重複チェック
             if (users.some(u => u.username === username)) {
-                const msgEl = document.getElementById('register-message');
-                if (msgEl) msgEl.textContent = 'このユーザーIDは既に使用されています';
+                if (msgEl) {
+                    msgEl.textContent = 'このユーザーIDは既に使用されています';
+                    msgEl.style.color = '#F44336'; // 赤色で表示
+                }
                 return;
             }
             
@@ -125,12 +133,12 @@ function initSimpleRegisterForm() {
             // 追加して保存
             users.push(newUser);
             localStorage.setItem('users', JSON.stringify(users));
+            console.log('新規ユーザーを登録しました:', newUser);
             
-            // 成功メッセージ
-            const msgEl = document.getElementById('register-message');
+            // 成功メッセージを明確に表示
             if (msgEl) {
-                msgEl.textContent = '登録が完了しました';
-                msgEl.style.color = '#4CAF50';
+                msgEl.textContent = '登録が完了しました！ログイン画面に戻ります...';
+                msgEl.style.color = '#4CAF50'; // 緑色で表示
                 
                 // 3秒後にログイン画面へ
                 setTimeout(() => {
@@ -150,6 +158,15 @@ function initSimpleRegisterForm() {
         backBtn.addEventListener('click', function() {
             document.getElementById('register-page').classList.add('hidden');
             document.getElementById('login-page').classList.remove('hidden');
+            // フォームとメッセージをリセット
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) registerForm.reset();
+            
+            const msgEl = document.getElementById('register-message');
+            if (msgEl) {
+                msgEl.textContent = '';
+                msgEl.style.color = '';
+            }
         });
     }
 }
