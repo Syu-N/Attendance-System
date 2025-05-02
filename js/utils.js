@@ -173,45 +173,74 @@ function getUsers() {
  * @returns {Object} 登録結果（success, message, user）
  */
 function registerUser(username, password, fullName, role) {
-    // この部分を修正
-    // const users = getUsers();
+    console.log('登録開始:', username);
     
-    // 以下のように修正
-    // ユーザーデータを直接ローカルストレージから取得
-    const usersJSON = localStorage.getItem('users');
-    const users = usersJSON ? JSON.parse(usersJSON) : [];
-    
-    console.log('登録処理 - 現在のユーザー:', users);
-    
-    // ユーザー名の重複チェック
-    if (users.some(user => user.username === username)) {
-        console.log('重複ユーザーが見つかりました:', username);
+    // 直接ローカルストレージから取得
+    try {
+        // ユーザー名などの空白を除去
+        username = username.trim();
+        password = password.trim();
+        fullName = fullName.trim();
+        
+        // ローカルストレージから直接取得
+        const usersJSON = localStorage.getItem('users');
+        let users = [];
+        
+        if (usersJSON) {
+            try {
+                users = JSON.parse(usersJSON);
+                console.log('既存ユーザー読み込み:', users.length);
+            } catch (e) {
+                console.error('既存ユーザーの解析エラー:', e);
+                users = [];
+            }
+        }
+        
+        // 重複チェック
+        const existingUser = users.find(u => u.username === username);
+        if (existingUser) {
+            console.log('重複ユーザー:', username);
+            return {
+                success: false,
+                message: 'このユーザーIDは既に使用されています'
+            };
+        }
+        
+        // 新しいID生成
+        let newId = 1;
+        if (users.length > 0) {
+            // IDの最大値を取得
+            const maxId = Math.max(...users.map(u => Number(u.id) || 0));
+            newId = maxId + 1;
+        }
+        
+        const newUser = {
+            id: newId,
+            username: username,
+            password: password,
+            fullName: fullName,
+            role: role || 'employee'
+        };
+        
+        // 追加
+        users.push(newUser);
+        
+        // 保存
+        localStorage.setItem('users', JSON.stringify(users));
+        console.log('ユーザー保存完了:', newUser.username, '(合計:', users.length, ')');
+        
+        return {
+            success: true,
+            message: '登録が完了しました',
+            user: newUser
+        };
+    } catch (error) {
+        console.error('登録エラー:', error);
         return {
             success: false,
-            message: 'このユーザーIDは既に使用されています'
+            message: '登録処理中にエラーが発生しました'
         };
     }
-    
-    const newId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
-    
-    const newUser = {
-        id: newId,
-        username: username,
-        password: password,
-        fullName: fullName,
-        role: role || 'employee'  // デフォルトは従業員
-    };
-    
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-    
-    console.log('登録完了 - 保存後のユーザー:', JSON.parse(localStorage.getItem('users')));
-    
-    return {
-        success: true,
-        message: '登録が完了しました',
-        user: newUser
-    };
 }
 
 // ================ 日付/時間処理関連 ================
