@@ -84,9 +84,9 @@ function initRegisterForm() {
         registerForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const username = getElement('reg-username')?.value;
-            const password = getElement('reg-password')?.value;
-            const fullName = getElement('reg-fullname')?.value;
+            const username = getElement('reg-username')?.value.trim();
+            const password = getElement('reg-password')?.value.trim();
+            const fullName = getElement('reg-fullname')?.value.trim();
             const role = getElement('reg-role')?.value;
             
             // 入力チェック
