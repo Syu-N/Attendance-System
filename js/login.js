@@ -111,43 +111,43 @@ function initSimpleRegisterForm() {
                 users = [];
             }
             
-            // 重複チェック
+            // ユーザー登録処理部分
             if (users.some(u => u.username === username)) {
+                // 重複の場合
                 if (msgEl) {
                     msgEl.textContent = 'このユーザーIDは既に使用されています';
-                    msgEl.style.color = '#F44336'; // 赤色で表示
+                    msgEl.style.color = '#F44336'; // 赤色
                 }
-                return;
-            }
-            
-            // 新規ユーザー
-            const newId = users.length > 0 ? Math.max(...users.map(u => u.id || 0)) + 1 : 1;
-            const newUser = {
-                id: newId,
-                username: username,
-                password: password,
-                fullName: fullName,
-                role: role || 'employee'
-            };
-            
-            // 追加して保存
-            users.push(newUser);
-            localStorage.setItem('users', JSON.stringify(users));
-            console.log('新規ユーザーを登録しました:', newUser);
-            
-            // 成功メッセージを明確に表示
-            if (msgEl) {
-                msgEl.textContent = '登録が完了しました！ログイン画面に戻ります...';
-                msgEl.style.color = '#4CAF50'; // 緑色で表示
-                
-                // 3秒後にログイン画面へ
-                setTimeout(() => {
-                    document.getElementById('register-page').classList.add('hidden');
-                    document.getElementById('login-page').classList.remove('hidden');
-                    registerForm.reset();
-                    msgEl.textContent = '';
-                    msgEl.style.color = '';
-                }, 3000);
+            } else {
+                // 重複がなく登録成功の場合
+                const newId = users.length > 0 ? Math.max(...users.map(u => Number(u.id) || l)) + 1 : 1;
+                const newUser = {
+                    id: newId,
+                    username: username,
+                    password: password,
+                    fullName: fullName,
+                    role: role || 'employee'
+                };
+    
+                // 追加して保存
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                console.log('新規ユーザーを登録しました:', newUser);
+    
+                // 成功メッセージを明確に表示
+                if (msgEl) {
+                    msgEl.textContent = '登録が完了しました！ログイン画面に戻ります...';
+                    msgEl.style.color = '#4CAF50'; // 緑色
+        
+                    // 3秒後にログイン画面へ
+                    setTimeout(() => {
+                        document.getElementById('register-page').classList.add('hidden');
+                        document.getElementById('login-page').classList.remove('hidden');
+                        registerForm.reset();
+                        msgEl.textContent = '';
+                        msgEl.style.color = '';
+                    }, 3000);
+                }
             }
         });
     }
